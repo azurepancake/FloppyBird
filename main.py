@@ -10,12 +10,15 @@ class Game(object):
 
 	def loadSprites(self):
 		self.background = Background()
+		self.ground = Ground()
 		self.bird = Bird()
 		self.backgroundSprites = pygame.sprite.RenderPlain((self.background))
+		self.groundSprites = pygame.sprite.RenderPlain((self.ground))
 		self.birdSprites = pygame.sprite.RenderPlain((self.bird))
 
 	def draw(self):
 		self.backgroundSprites.draw(self.screen)
+		self.groundSprites.draw(self.screen)
 		self.birdSprites.draw(self.screen)
 		self.birdSprites.update()
 		pygame.display.flip()
@@ -32,7 +35,7 @@ class Game(object):
 	def mainLoop(self):
 		self.loadSprites()
 		while 1:
-			self.clock.tick(30)
+			self.clock.tick(45)
 			self.getEvents()
 			self.draw()
 
@@ -40,6 +43,13 @@ class Background(pygame.sprite.Sprite):
 	def __init__(self):
 		pygame.sprite.Sprite.__init__(self)
 		self.image, self.rect = loadImage('background1.png')
+
+class Ground(pygame.sprite.Sprite):
+	def __init__(self):
+		pygame.sprite.Sprite.__init__(self)
+		self.image, self.rect = loadImage('ground1.png')
+		self.rect.x = 0
+		self.rect.y = 400
 
 class Bird(pygame.sprite.Sprite):
 	def __init__(self):
@@ -54,13 +64,13 @@ class Bird(pygame.sprite.Sprite):
 
 	def update(self):
 		self.animate()
-		#self.drop()
+		self.drop()
 
 	def animate(self):
 		self.timer += 1
 
 		if self.timer == 8:
-			self.image, self.rect = loadImage(self.sprites[self.sprite])
+			self.image = updateImage(self.sprites[self.sprite])
 			self.sprite += 1
 
 			if self.sprite == 3:
@@ -69,13 +79,10 @@ class Bird(pygame.sprite.Sprite):
 			self.timer = 0
 
 	def drop(self):
-		self.dropRate += 1
-
-		if self.dropRate == 10:
-			self.rect.centery += 1
-			self.dropRate = 0
+		self.rect.centery += 3
 			
 	def jump(self):
+		self.image = updateImage('flap.png')
 		self.rect.centery -= 47
 
 if __name__ == "__main__":
