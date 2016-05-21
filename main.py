@@ -14,10 +14,13 @@ class Game(object):
 		self.backgroundSprites = pygame.sprite.RenderPlain((self.background))
 		self.birdSprites = pygame.sprite.RenderPlain((self.bird))
 
-	def mainLoop(self):
-		self.loadSprites()
-		while 1:
-			self.clock.tick(30)
+	def draw(self):
+			self.backgroundSprites.draw(self.screen)
+			self.birdSprites.draw(self.screen)
+			self.birdSprites.update()
+			pygame.display.flip()
+
+	def getEvents(self):
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					sys.exit()
@@ -26,10 +29,12 @@ class Game(object):
 					if event.key == K_SPACE:
 						self.bird.jump()
 
-			self.backgroundSprites.draw(self.screen)
-			self.birdSprites.draw(self.screen)
-			self.birdSprites.update()
-			pygame.display.flip()
+	def mainLoop(self):
+		self.loadSprites()
+		while 1:
+			self.clock.tick(30)
+			self.getEvents()
+			self.draw()
 
 class Background(pygame.sprite.Sprite):
 	def __init__(self):
