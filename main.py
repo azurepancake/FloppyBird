@@ -15,19 +15,19 @@ class Game(object):
 		self.birdSprites = pygame.sprite.RenderPlain((self.bird))
 
 	def draw(self):
-			self.backgroundSprites.draw(self.screen)
-			self.birdSprites.draw(self.screen)
-			self.birdSprites.update()
-			pygame.display.flip()
+		self.backgroundSprites.draw(self.screen)
+		self.birdSprites.draw(self.screen)
+		self.birdSprites.update()
+		pygame.display.flip()
 
 	def getEvents(self):
-			for event in pygame.event.get():
-				if event.type == pygame.QUIT:
-					sys.exit()
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				sys.exit()
 
-				if event.type == KEYDOWN:
-					if event.key == K_SPACE:
-						self.bird.jump()
+			if event.type == KEYDOWN:
+				if event.key == K_SPACE:
+					self.bird.jump()
 
 	def mainLoop(self):
 		self.loadSprites()
