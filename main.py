@@ -68,8 +68,10 @@ class Bird(pygame.sprite.Sprite):
 		self.image, self.rect = loadImage(self.sprites[self.sprite])
 		self.rect.centerx = 90
 		self.rect.centery = 220
+		self.jumpSpeed = -10
+		self.vertSpeed = 0
+		self.fallingSpeed = -1
 		self.timer = 0
-		self.falling = True
 
 	def update(self): 
 		self.animate()
@@ -88,12 +90,12 @@ class Bird(pygame.sprite.Sprite):
 			self.timer = 0
 
 	def drop(self):
-		if self.falling == True:
-			self.rect.centery += 5
+		self.rect.centery += self.vertSpeed
+		self.vertSpeed -= self.fallingSpeed
 			
 	def jump(self):
 		self.image = updateImage('flap.png')
-		self.rect.centery -= 47
+		self.vertSpeed = self.jumpSpeed
 
 if __name__ == "__main__":
 	Game = Game()
