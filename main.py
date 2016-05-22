@@ -63,10 +63,10 @@ class Ground(pygame.sprite.Sprite):
 class Bird(pygame.sprite.Sprite):
 	def __init__(self):
 		pygame.sprite.Sprite.__init__(self)
-		self.sprites = ['bird1.png', 'bird2.png', 'bird3.png']
-		self.fallingSprite = ['falling1.png', 'falling2.png', 'falling3.png', 'falling4.png']
+		self.flyingSprites = ['bird1.png', 'bird2.png', 'bird3.png']
+		self.fallingSprites = ['falling1.png', 'falling2.png', 'falling3.png', 'falling4.png']
 		self.sprite = 0
-		self.image, self.rect = loadImage(self.sprites[self.sprite])
+		self.image, self.rect = loadImage(self.flyingSprites[self.sprite])
 		self.rect.centerx = 90
 		self.rect.centery = 220
 		self.jumpSpeed = -10
@@ -82,7 +82,7 @@ class Bird(pygame.sprite.Sprite):
 		self.timer += 1
 
 		if self.timer == 8:
-			self.image = updateImage(self.sprites[self.sprite])
+			self.image = updateImage(self.flyingSprites[self.sprite])
 			self.sprite += 1
 
 			if self.sprite == 3:
