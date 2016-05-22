@@ -1,7 +1,7 @@
 from helpers import *
 
 class Game(object):
-	def __init__(self, width = 250, height = 441):
+	def __init__(self, width = 248, height = 441):
 		pygame.init()
 		self.width = width
 		self.height = height
@@ -19,6 +19,7 @@ class Game(object):
 	def draw(self):
 		self.backgroundSprites.draw(self.screen)
 		self.groundSprites.draw(self.screen)
+		self.groundSprites.update()
 		self.birdSprites.draw(self.screen)
 		self.birdSprites.update()
 		pygame.display.flip()
@@ -47,10 +48,18 @@ class Background(pygame.sprite.Sprite):
 class Ground(pygame.sprite.Sprite):
 	def __init__(self):
 		pygame.sprite.Sprite.__init__(self)
-		self.image, self.rect = loadImage('ground1.png')
+		self.image, self.rect = loadImage('longbg.png')
 		self.rect.x = 0
 		self.rect.y = 400
 
+	def update(self):
+		self.rect.x -= 1
+		if self.rect.right <= 248:
+			self.reset()
+
+	def reset(self):
+		self.rect.left = 0
+		
 class Bird(pygame.sprite.Sprite):
 	def __init__(self):
 		pygame.sprite.Sprite.__init__(self)
@@ -59,10 +68,10 @@ class Bird(pygame.sprite.Sprite):
 		self.image, self.rect = loadImage(self.sprites[self.sprite])
 		self.rect.centerx = 90
 		self.rect.centery = 220
-		self.dropRate = 0
 		self.timer = 0
+		self.falling = True
 
-	def update(self):
+	def update(self): 
 		self.animate()
 		self.drop()
 
@@ -79,7 +88,8 @@ class Bird(pygame.sprite.Sprite):
 			self.timer = 0
 
 	def drop(self):
-		self.rect.centery += 3
+		if self.falling == True:
+			self.rect.centery += 5
 			
 	def jump(self):
 		self.image = updateImage('flap.png')
