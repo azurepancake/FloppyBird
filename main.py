@@ -53,6 +53,9 @@ class Ground(pygame.sprite.Sprite):
 		self.rect.y = 400
 
 	def update(self):
+		self.scroll()
+
+	def scroll(self):
 		self.rect.x -= 1
 		if self.rect.right <= 248:
 			self.reset()
