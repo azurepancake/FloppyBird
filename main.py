@@ -64,6 +64,7 @@ class Bird(pygame.sprite.Sprite):
 	def __init__(self):
 		pygame.sprite.Sprite.__init__(self)
 		self.sprites = ['bird1.png', 'bird2.png', 'bird3.png']
+		self.fallingSprite = ['falling1.png', 'falling2.png', 'falling3.png', 'falling4.png']
 		self.sprite = 0
 		self.image, self.rect = loadImage(self.sprites[self.sprite])
 		self.rect.centerx = 90
