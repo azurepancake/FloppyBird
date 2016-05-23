@@ -48,7 +48,7 @@ class Background(pygame.sprite.Sprite):
 class Ground(pygame.sprite.Sprite):
 	def __init__(self):
 		pygame.sprite.Sprite.__init__(self)
-		self.image, self.rect = loadImage('longbg.png')
+		self.image, self.rect = loadImage('ground1.png')
 		self.rect.x = 0
 		self.rect.y = 400
 
@@ -67,7 +67,7 @@ class Bird(pygame.sprite.Sprite):
 	def __init__(self):
 		pygame.sprite.Sprite.__init__(self)
 		self.flyingSprites = ['bird1.png', 'bird2.png', 'bird3.png']
-		self.fallingSprites = ['falling1.png', 'falling2.png', 'falling3.png', 'falling4.png']
+		self.fallingSprites = ['flap.png', 'bird3.png', 'falling1.png', 'falling2.png', 'falling3.png', 'falling4.png', 'falling5.png']
 		self.sprite = 0
 		self.image, self.rect = loadImage(self.flyingSprites[self.sprite])
 		self.rect.centerx = 90
@@ -75,31 +75,48 @@ class Bird(pygame.sprite.Sprite):
 		self.jumpSpeed = -10
 		self.vertSpeed = 0
 		self.fallingSpeed = -1
+		self.falling = True
 		self.timer = 0
 
 	def update(self): 
 		self.animate()
-		self.drop()
+		self.fall()
 
 	def animate(self):
 		self.timer += 1
 
-		if self.timer == 8:
-			self.image = updateImage(self.flyingSprites[self.sprite])
-			self.sprite += 1
+		if self.falling == False:
 
-			if self.sprite == 3:
-				self.sprite = 0
+			if self.timer == 8:
+				self.image = updateImage(self.flyingSprites[self.sprite])
+				self.sprite += 1
 
-			self.timer = 0
+				if self.sprite == 3:
+					self.sprite = 0
 
-	def drop(self):
+				self.timer = 0
+		else:
+
+			if self.timer == 5 and self.sprite < 7:
+				self.image = updateImage(self.fallingSprites[self.sprite])
+				self.sprite += 1
+
+				self.timer = 0
+
+	def fall(self):
+		self.falling = True
 		self.rect.centery += self.vertSpeed
 		self.vertSpeed -= self.fallingSpeed
 			
 	def jump(self):
+		self.resetAnimation()
+		self.falling = False
 		self.image = updateImage('flap.png')
 		self.vertSpeed = self.jumpSpeed
+
+	def resetAnimation(self):
+		self.timer = 0
+		self.sprite = 0
 
 if __name__ == "__main__":
 	Game = Game()
