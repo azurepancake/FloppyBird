@@ -7,6 +7,7 @@ class Game(object):
 		self.height = height
 		self.screen = pygame.display.set_mode((self.width, self.height))
 		self.clock = pygame.time.Clock()
+		self.timer = 0
 
 	def loadSprites(self):
 		self.background = Background()
@@ -15,9 +16,12 @@ class Game(object):
 		self.backgroundSprites = pygame.sprite.RenderPlain((self.background))
 		self.groundSprites = pygame.sprite.RenderPlain((self.ground))
 		self.birdSprites = pygame.sprite.RenderPlain((self.bird))
+		self.pipeSprites = pygame.sprite.RenderPlain()
 
 	def draw(self):
 		self.backgroundSprites.draw(self.screen)
+		self.pipeSprites.draw(self.screen)
+		self.pipeSprites.update()
 		self.groundSprites.draw(self.screen)
 		self.groundSprites.update()
 		self.birdSprites.draw(self.screen)
@@ -33,12 +37,25 @@ class Game(object):
 				if event.key == K_SPACE:
 					self.bird.jump()
 
+	def time(self):
+		self.clock.tick(45)
+		self.timer += 1
+
 	def mainLoop(self):
 		self.loadSprites()
 		while 1:
-			self.clock.tick(45)
+			self.time()
 			self.getEvents()
+			self.createPipe()
 			self.draw()
+			
+	def createPipe(self):
+		if self.timer >= 100:
+			self.length = random.randint(80, 250)
+			self.topPipe = Pipes(self.length, "top")
+			self.bottomPipe = Pipes((self.length + 120), "bottom")
+			self.pipeSprites.add(self.topPipe, self.bottomPipe)
+			self.timer = 0
 
 class Background(pygame.sprite.Sprite):
 	def __init__(self):
@@ -95,6 +112,7 @@ class Bird(pygame.sprite.Sprite):
 					self.sprite = 0
 
 				self.timer = 0
+
 		else:
 
 			if self.timer == 5 and self.sprite < 7:
@@ -117,6 +135,27 @@ class Bird(pygame.sprite.Sprite):
 	def resetAnimation(self):
 		self.timer = 0
 		self.sprite = 0
+
+class Pipes(pygame.sprite.Sprite):
+	def __init__(self, length, pos):
+		pygame.sprite.Sprite.__init__(self)
+		self.pos = pos
+		self.length = length
+
+		if self.pos == "top":
+			self.image, self.rect = loadImage('topPipe.png')
+			self.rect.bottom = self.length
+		else:
+			self.image, self.rect = loadImage('bottomPipe.png')
+			self.rect.top = self.length
+
+		self.rect.left = 250
+
+	def update(self):
+		self.rect.x -= 2
+
+	def reset(self):
+		self.rect.left = 250
 
 if __name__ == "__main__":
 	Game = Game()
