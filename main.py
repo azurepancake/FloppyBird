@@ -98,6 +98,7 @@ class Bird(pygame.sprite.Sprite):
 	def update(self): 
 		self.animate()
 		self.fall()
+		self.collisionCheck()
 
 	def animate(self):
 		self.timer += 1
@@ -135,6 +136,10 @@ class Bird(pygame.sprite.Sprite):
 	def resetAnimation(self):
 		self.timer = 0
 		self.sprite = 0
+
+	def collisionCheck(self):
+		if self.rect.top <= 0:
+			self.rect.top = 0
 
 class Pipes(pygame.sprite.Sprite):
 	def __init__(self, length, pos):
