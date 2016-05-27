@@ -8,6 +8,7 @@ class Game(object):
 		self.screen = pygame.display.set_mode((self.width, self.height))
 		self.clock = pygame.time.Clock()
 		self.timer = 0
+		self.playing = True
 
 	def loadSprites(self):
 		self.background = Background()
@@ -46,6 +47,7 @@ class Game(object):
 		while 1:
 			self.time()
 			self.getEvents()
+			self.collisionCheck()
 			self.createPipe()
 			self.draw()
 			
@@ -56,6 +58,19 @@ class Game(object):
 			self.bottomPipe = Pipes((self.length + 120), "bottom")
 			self.pipeSprites.add(self.topPipe, self.bottomPipe)
 			self.timer = 0
+
+	def collisionCheck(self):
+		if self.bird.rect.top <= 0:
+			self.bird.rect.top = 0
+
+		if pygame.sprite.groupcollide(self.birdSprites, self.pipeSprites, 1, 0):
+			self.playing = False
+		elif pygame.sprite.groupcollide(self.birdSprites, self.groundSprites, 1, 0):
+			self.playing = False
+
+		if self.playing == False:
+			print("Game Over!")
+			exit()
 
 class Background(pygame.sprite.Sprite):
 	def __init__(self):
@@ -73,7 +88,7 @@ class Ground(pygame.sprite.Sprite):
 		self.scroll()
 
 	def scroll(self):
-		self.rect.x -= 1
+		self.rect.x -= 2
 		if self.rect.right <= 248:
 			self.reset()
 
@@ -86,27 +101,28 @@ class Bird(pygame.sprite.Sprite):
 		self.flyingSprites = ['bird1.png', 'bird2.png', 'bird3.png']
 		self.fallingSprites = ['flap.png', 'bird3.png', 'falling1.png', 'falling2.png', 'falling3.png', 'falling4.png', 'falling5.png']
 		self.sprite = 0
-		self.image, self.rect = loadImage(self.flyingSprites[self.sprite])
+		self.image, self.rect = loadImage('flap.png')
 		self.rect.centerx = 90
 		self.rect.centery = 220
 		self.jumpSpeed = -10
 		self.vertSpeed = 0
+		self.falling = False
 		self.fallingSpeed = -1
-		self.falling = True
+		self.fallTime = 0
+		self.angle = 25
 		self.timer = 0
 
 	def update(self): 
 		self.animate()
 		self.fall()
-		self.collisionCheck()
 
 	def animate(self):
 		self.timer += 1
 
 		if self.falling == False:
 
-			if self.timer == 8:
-				self.image = updateImage(self.flyingSprites[self.sprite])
+			if self.timer == 6:
+				self.image = pygame.transform.rotate(updateImage(self.flyingSprites[self.sprite]), 25)
 				self.sprite += 1
 
 				if self.sprite == 3:
@@ -116,30 +132,31 @@ class Bird(pygame.sprite.Sprite):
 
 		else:
 
-			if self.timer == 5 and self.sprite < 7:
-				self.image = updateImage(self.fallingSprites[self.sprite])
-				self.sprite += 1
+			self.angle -= 9
+			self.image = pygame.transform.rotate(updateImage(self.flyingSprites[self.sprite]), self.angle)
 
-				self.timer = 0
+			if self.angle <= -100:
+				self.angle = -100
 
 	def fall(self):
-		self.falling = True
+		self.fallTime += 1
+
+		if self.fallTime == 20:
+			self.falling = True
+
 		self.rect.centery += self.vertSpeed
 		self.vertSpeed -= self.fallingSpeed
 			
 	def jump(self):
 		self.resetAnimation()
 		self.falling = False
-		self.image = updateImage('flap.png')
 		self.vertSpeed = self.jumpSpeed
 
 	def resetAnimation(self):
 		self.timer = 0
+		self.fallTime = 0
 		self.sprite = 0
-
-	def collisionCheck(self):
-		if self.rect.top <= 0:
-			self.rect.top = 0
+		self.angle = 50
 
 class Pipes(pygame.sprite.Sprite):
 	def __init__(self, length, pos):
